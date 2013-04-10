@@ -6,46 +6,65 @@ class ceph-base {
     purge_sources_list   => true,
   }
 
-  apt::source { "debian":
-      location          => "http://http.us.debian.org/debian",
-      release           => "squeeze",
-      repos             => "main",
-      key               => "55BE302B",
-      key_server        => "pgp.mit.edu",
-      include_src       => false
+  apt::source { "precise":
+      location          => "http://us.archive.ubuntu.com/ubuntu/",
+      release           => "precise",
+      repos             => "main restricted",
+      include_src       => true
   }
 
-  apt::source { "debian-updates":
-      location          => "http://http.us.debian.org/debian",
-      release           => "squeeze-updates",
-      repos             => "main",
-      include_src       => false
+  apt::source { "precise-updates":
+      location          => "http://us.archive.ubuntu.com/ubuntu/",
+      release           => "precise-updates",
+      repos             => "main restricted",
+      include_src       => true 
   }
 
-  apt::source { "debian-security":
-      location          => "http://security.debian.org/",
-      release           => "squeeze/updates",
-      repos             => "main",
-      include_src       => false
+  apt::source { "precise-universe":
+      location          => "http://us.archive.ubuntu.com/ubuntu/",
+      release           => "precise",
+      repos             => "universe",
+      include_src       => true 
   }
 
-  apt::source { "debian-backports":
-      location          => "http://backports.debian.org/debian-backports",
-      release           => "squeeze-backports",
-      repos             => "main",
-      include_src       => false
+  apt::source { "precise-universe-updates":
+      location          => "http://us.archive.ubuntu.com/ubuntu/",
+      release           => "precise-updates",
+      repos             => "universe",
+      include_src       => true
   }
 
-  apt::source { "debian-non-free":
-      location          => "http://http.us.debian.org/debian",
-      release           => "squeeze",
-      repos             => "non-free",
-      include_src       => false,
+  apt::source { "precise-multiverse":
+      location          => "http://us.archive.ubuntu.com/ubuntu/",
+      release           => "precise",
+      repos             => "multiverse",
+      include_src       => true
+  }
+
+  apt::source { "precise-multiverse-updates":
+      location          => "http://us.archive.ubuntu.com/ubuntu/",
+      release           => "precise-updates",
+      repos             => "multiverse",
+      include_src       => true
+  }
+
+  apt::source { "precise-backports":
+      location          => "http://us.archive.ubuntu.com/ubuntu/",
+      release           => "precise-backports",
+      repos             => "main restricted universe multiverse",
+      include_src       => true
+  }
+
+  apt::source { "precise-security":
+      location          => "http://security.ubuntu.com/ubuntu",
+      release           => "precise-security",
+      repos             => "main restricted universe multiverse",
+      include_src       => true
   }
 
   apt::source { "ceph-bobtail":
       location          => "http://ceph.com/debian-bobtail",
-      release           => "squeeze",
+      release           => "precise",
       repos             => "main",
       key               => "17ED316D",
       key_server        => "pgp.mit.edu",
@@ -71,15 +90,20 @@ class ceph-packages-base {
     ensure => "installed",
     require  => Class['ceph-base'],
   }
+  package { "wget":
+    ensure => "installed",
+    require  => Class['ceph-base'],
+  }
+  package { "curl":
+    ensure => "installed",
+    require  => Class['ceph-base'],
+  }
   package { "nano":
     ensure => "installed",
     require  => Class['ceph-base'],
   }
   package { "rsync":
     ensure => "installed",
-    require  => Class['ceph-base'],
-  }
-  class { "ntp":
     require  => Class['ceph-base'],
   }
 
