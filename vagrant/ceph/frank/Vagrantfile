@@ -9,14 +9,14 @@ Vagrant::Config.run do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "Puppetlabs Debian 6.0.6 x86_64"
+  config.vm.box = "Ubuntu precise 32"
 
   config.vm.customize ['createhd', '--filename', osd_vdi, '--size', 10 * 1024]
   config.vm.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', osd_vdi]
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/debian-606-x64.box"
+  config.vm.box_url = "http://files.vagrantup.com/precise32.box"
 
   # Boot with a GUI so you can see the screen. (Default is headless)
   # config.vm.boot_mode = :gui
