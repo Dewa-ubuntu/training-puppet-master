@@ -9,3 +9,7 @@ class ceph-packages {
 class ceph-osd {
   class { "ceph-osd-base": }
 }
+
+class ceph-fs {
+  class { "ceph-fs-base": }
+}

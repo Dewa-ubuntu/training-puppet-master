@@ -29,6 +29,13 @@ class ceph-base {
       include_src       => false
   }
 
+  apt::source { "debian-backports":
+      location          => "http://backports.debian.org/debian-backports",
+      release           => "squeeze-backports",
+      repos             => "main",
+      include_src       => false
+  }
+
   apt::source { "debian-non-free":
       location          => "http://http.us.debian.org/debian",
       release           => "squeeze",
@@ -96,5 +103,13 @@ class ceph-osd-base {
   package { "xfsprogs":
     ensure => "installed",
     require  => Class['ceph-base'],
+  }
+}
+
+class ceph-fs-base {
+  package { "linux-base":
+    ensure => "latest",
+    require => Class['ceph-base'],
+    provider => "aptitude",
   }
 }
