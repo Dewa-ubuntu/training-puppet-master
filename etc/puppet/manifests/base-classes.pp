@@ -111,16 +111,6 @@ class ceph-packages-base {
     ensure => "installed",
     require  => Class['ceph-base'],
   }
-  package { "radosgw":
-    ensure => "installed",
-    require  => Class['ceph-base'],
-  }
-
-  package { "libapache2-mod-fastcgi":
-    ensure => "installed",
-    require  => Class['ceph-base'],
-  }
-
 }
 
 class ceph-osd-base {
@@ -130,10 +120,14 @@ class ceph-osd-base {
   }
 }
 
-class ceph-fs-base {
-  package { "linux-base":
-    ensure => "latest",
-    require => Class['ceph-base'],
-    provider => "aptitude",
+class ceph-mds-base {
+  package { "radosgw":
+    ensure => "installed",
+    require  => Class['ceph-base'],
+  }
+
+  package { "libapache2-mod-fastcgi":
+    ensure => "installed",
+    require  => Class['ceph-base'],
   }
 }

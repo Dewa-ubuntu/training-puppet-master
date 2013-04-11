@@ -10,6 +10,7 @@ class ceph-osd {
   class { "ceph-osd-base": }
 }
 
-class ceph-fs {
-  class { "ceph-fs-base": }
+class ceph-mds {
+  class { "ceph-mds-base": }
 }
+
