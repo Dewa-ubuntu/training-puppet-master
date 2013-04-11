@@ -130,4 +130,9 @@ class ceph-mds-base {
     ensure => "installed",
     require  => Class['ceph-base'],
   }
+
+  package { "apache2-mpm-prefork":
+    ensure => "installed",
+    require  => Class['ceph-base'],
+  }
 }
