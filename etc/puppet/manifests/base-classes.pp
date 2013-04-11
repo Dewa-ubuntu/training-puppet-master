@@ -120,7 +120,7 @@ class ceph-osd-base {
   }
 }
 
-class ceph-mds-base {
+class ceph-radosgw-base {
   package { "radosgw":
     ensure => "installed",
     require  => Class['ceph-base'],

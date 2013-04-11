@@ -9,19 +9,19 @@ node daisy {
   class { "ceph": }
   class { "ceph-packages": }
   class { "ceph-osd": }
-  class { "ceph-mds": }
+  class { "ceph-radosgw": }
 }
 
 node eric {
   class { "ceph": }
   class { "ceph-packages": }
   class { "ceph-osd": }
-  class { "ceph-mds": }
+  class { "ceph-radosgw": }
 }
 
 node frank {
   class { "ceph": }
   class { "ceph-packages": }
   class { "ceph-osd": }
-  class { "ceph-mds": }
+  class { "ceph-radosgw": }
 }
