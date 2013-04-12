@@ -14,3 +14,10 @@ class ceph-radosgw {
   class { "ceph-radosgw-base": }
 }
 
+class ceph-deploy {
+  class { "ceph-deploy-base": }
+}
+
+class ceph-openstack {
+  class { "ceph-openstack-base": }
+}

@@ -62,6 +62,15 @@ class ceph-base {
       include_src       => true
   }
 
+  apt::source { "precise-cloud-archive":
+      location          => "http://ubuntu-cloud.archive.canonical.com/ubuntu",
+      release           => "precise-updates/grizzly",
+      repos             => "main",
+      key               => "5EDB1B62EC4926EA",
+      key_server        => "keyserver.ubuntu.com",
+      include_src       => true,
+  }
+
   apt::source { "ceph-bobtail":
       location          => "http://ceph.com/debian-bobtail",
       release           => "precise",
@@ -70,10 +79,12 @@ class ceph-base {
       key_server        => "pgp.mit.edu",
       include_src       => false,
   }
-
 }
 
 class ceph-packages-base {
+
+  class { "ntp": }
+
   package { "console-data":
     ensure => "installed",
     require  => Class['ceph-base'],
@@ -106,7 +117,6 @@ class ceph-packages-base {
     ensure => "installed",
     require  => Class['ceph-base'],
   }
-
   package { "ceph":
     ensure => "installed",
     require  => Class['ceph-base'],
@@ -132,6 +142,25 @@ class ceph-radosgw-base {
   }
 
   package { "apache2-mpm-prefork":
+    ensure => "installed",
+    require  => Class['ceph-base'],
+  }
+}
+
+class ceph-deploy-base {
+  package { "git-core":
+    ensure => "installed", 
+    require  => Class['ceph-base'],
+  }
+   
+  package { "python-virtualenv":
+    ensure => "installed",
+    require  => Class['ceph-base'],
+  }  
+}
+
+class ceph-openstack-base {
+  package { "python-swiftclient":
     ensure => "installed",
     require  => Class['ceph-base'],
   }
