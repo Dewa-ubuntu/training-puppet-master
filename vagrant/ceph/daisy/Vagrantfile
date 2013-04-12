@@ -1,7 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-osd_vdi = 'osd.vdi'
+osd_vdi0 = 'osd0.vdi'
+osd_vdi1 = 'osd1.vdi'
 
 Vagrant::Config.run do |config|
   # All Vagrant configuration is done here. The most common configuration
@@ -11,8 +12,11 @@ Vagrant::Config.run do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "Ubuntu precise 32"
 
-  config.vm.customize ['createhd', '--filename', osd_vdi, '--size', 10 * 1024]
-  config.vm.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', osd_vdi]
+  config.vm.customize ['createhd', '--filename', osd_vdi0, '--size', 10 * 1024]
+  config.vm.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', osd_vdi0]
+
+  config.vm.customize ['createhd', '--filename', osd_vdi1, '--size', 10 * 1024]
+  config.vm.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', osd_vdi1]
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
