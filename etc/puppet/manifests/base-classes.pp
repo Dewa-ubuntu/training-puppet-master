@@ -172,7 +172,7 @@ class ceph-openstack-base {
   floating_range          => '192.168.101.64/28',
   fixed_range             => '10.0.0.0/24',
   network_manager         => 'nova.network.manager.FlatDHCPManager',
-  libvirt_type            => 'qemu'
+  libvirt_type            => 'qemu',
   admin_email             => 'admin@test.com',
   admin_password          => 'admin_password',
   secret_key              => 'secret_key',
