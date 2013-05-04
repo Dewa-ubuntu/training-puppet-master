@@ -188,5 +188,5 @@ class ceph-openstack-base {
   quantum                 => false,
   purge_nova_config       => false,
   require                 => Class['ceph-base'],
-}
+  }
 }
