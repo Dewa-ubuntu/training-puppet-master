@@ -1,0 +1,129 @@
+{
+  "description": "Resource types for managing settings in INI files",
+  "source": "git://github.com/cprice-puppet/puppetlabs-inifile.git",
+  "version": "0.10.0",
+  "license": "Apache",
+  "project_page": "https://github.com/cprice-puppet/puppetlabs-inifile",
+  "checksums": {
+    "spec/spec_helper.rb": "7ac8d5b0b5a15c3cf9e730a8e416a7e9",
+    "lib/puppet/util/ini_file.rb": "f4370f87086d1158c41e703ec311eced",
+    "tests/ini_subsetting.pp": "8d4ccc11f37a9f2bf7d7e53f9fe49fa3",
+    "CHANGELOG": "8f940523b070911133908f1703300f21",
+    "LICENSE": "519b25a3992e0598a9855e4ccd7f66a1",
+    "spec/unit/puppet/util/ini_file_spec.rb": "d1fc8b3a91d598196e84dab7c0218425",
+    "lib/puppet/provider/ini_subsetting/ruby.rb": "99991c9d3ccf54c2aa1fcacf491d0cfc",
+    "lib/puppet/type/ini_setting.rb": "afcd3f28b946b08db1b48fb189e6d8cf",
+    "lib/puppet/util/setting_value.rb": "33b061f011dca850da3e6841ea4e6637",
+    "lib/puppet/util/external_iterator.rb": "69ad1eb930ca6d8d6b6faea343b4a22e",
+    "spec/unit/puppet/util/setting_value_spec.rb": "64db9b766063db958e73e713a3e584fa",
+    "tests/ini_setting.pp": "2f64449a8bda53b626556c200a9a489f",
+    "README.markdown": "e478c82bea7037c3e25c14700e8d19ea",
+    "lib/puppet/type/ini_subsetting.rb": "b4e6a659f461bcd274dcdf1b1c39db65",
+    "spec/unit/puppet/provider/ini_setting/ruby_spec.rb": "ca7107e565fcf3a8f480bbf13171d9a0",
+    "spec/unit/puppet/util/external_iterator_spec.rb": "35cc6e56e0064e496e9151dd778f751f",
+    "lib/puppet/provider/ini_setting/ruby.rb": "6f528a4f961da1a6dbf352be1a062df6",
+    "spec/unit/puppet/provider/ini_subsetting/ruby_spec.rb": "ace60158794f8545994ceed19fbca667",
+    "lib/puppet/util/ini_file/section.rb": "77757399ed9b9ce352ddcc8b8f9273c4",
+    "Modulefile": "3e47cfc1eaaf4d9869f40910d354ef40"
+  },
+  "name": "cprice404-inifile",
+  "dependencies": [
+
+  ],
+  "types": [
+    {
+      "providers": [
+        {
+          "doc": "",
+          "name": "ruby"
+        }
+      ],
+      "parameters": [
+        {
+          "doc": "An arbitrary name used as the identity of the resource.",
+          "name": "name"
+        },
+        {
+          "doc": "The name of the section in the ini file in which the setting should be defined.",
+          "name": "section"
+        },
+        {
+          "doc": "The name of the setting to be defined.",
+          "name": "setting"
+        },
+        {
+          "doc": "The ini file Puppet will ensure contains the specified setting.",
+          "name": "path"
+        },
+        {
+          "doc": "The separator string to use between each setting name and value. Defaults to \" = \", but you could use this to override e.g. whether or not the separator should include whitespace.",
+          "name": "key_val_separator"
+        }
+      ],
+      "properties": [
+        {
+          "doc": "The basic property that the resource should be in.  Valid values are `present`, `absent`.",
+          "name": "ensure"
+        },
+        {
+          "doc": "The value of the setting to be defined.",
+          "name": "value"
+        }
+      ],
+      "doc": "",
+      "name": "ini_setting"
+    },
+    {
+      "providers": [
+        {
+          "doc": "",
+          "name": "ruby"
+        }
+      ],
+      "parameters": [
+        {
+          "doc": "An arbitrary name used as the identity of the resource.",
+          "name": "name"
+        },
+        {
+          "doc": "The name of the section in the ini file in which the setting should be defined.",
+          "name": "section"
+        },
+        {
+          "doc": "The name of the setting to be defined.",
+          "name": "setting"
+        },
+        {
+          "doc": "The name of the subsetting to be defined.",
+          "name": "subsetting"
+        },
+        {
+          "doc": "The separator string between subsettings. Defaults to \" \"",
+          "name": "subsetting_separator"
+        },
+        {
+          "doc": "The ini file Puppet will ensure contains the specified setting.",
+          "name": "path"
+        },
+        {
+          "doc": "The separator string to use between each setting name and value. Defaults to \" = \", but you could use this to override e.g. whether or not the separator should include whitespace.",
+          "name": "key_val_separator"
+        }
+      ],
+      "properties": [
+        {
+          "doc": "The basic property that the resource should be in.  Valid values are `present`, `absent`.",
+          "name": "ensure"
+        },
+        {
+          "doc": "The value of the subsetting to be defined.",
+          "name": "value"
+        }
+      ],
+      "doc": "",
+      "name": "ini_subsetting"
+    }
+  ],
+  "summary": "Resource types for managing settings in INI files",
+  "author": "Chris Price"
+}
