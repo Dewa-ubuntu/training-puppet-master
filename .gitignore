@@ -2,5 +2,6 @@ var/lib/puppet/reports
 var/lib/puppet/yaml
 var/lib/puppet/puppet-module/cache
 **/.vagrant
+.vagrant
 .DS_Store
 **/.DS_Store
