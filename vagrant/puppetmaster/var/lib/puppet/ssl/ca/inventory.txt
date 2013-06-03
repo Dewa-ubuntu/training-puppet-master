@@ -1,4 +1,0 @@
-# Inventory of signed certificates
-# SERIAL NOT_BEFORE NOT_AFTER SUBJECT
-0x0001 2013-06-02T21:42:21GMT 2018-06-02T21:42:21GMT /CN=Puppet CA: training-puppet-master
-0x0002 2013-06-02T21:42:22GMT 2018-06-02T21:42:22GMT /CN=training-puppet-master
