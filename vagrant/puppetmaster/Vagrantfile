@@ -40,6 +40,6 @@ Vagrant::Config.run do |config|
 
   config.vm.host_name = "training-puppet-master"
 
-  #config.vm.provision :shell, :path => "provision.sh"
+  config.vm.provision :shell, :path => "provision.sh"
 
 end

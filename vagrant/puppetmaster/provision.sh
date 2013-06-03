@@ -117,14 +117,14 @@ echo "Restarting apache2..."
 
 service apache2 restart
 
-#echo "Installing puppet modules..."
+echo "Installing puppet modules..."
 
-#for m in \
-#  puppetlabs-apt \
-#  puppetlabs-mysql puppetlabs-ntp \
-#  hastexo-location; do
-#  puppet module install --module_repository http://forge.puppetlabs.com $m
-#done
+for m in \
+  puppetlabs-apt \
+  puppetlabs-mysql puppetlabs-ntp \
+  hastexo-location; do
+  puppet module install --module_repository http://forge.puppetlabs.com $m
+done
 
 #echo "Applying puppet config..."
 
