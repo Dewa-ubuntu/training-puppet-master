@@ -17,3 +17,7 @@ class puppet-dashboard {
 class puppet-dashboard-workers {
   class { "puppet-dashboard-workers-base": }
 }
+
+class puppet-master-cleanup {
+  class { "puppet-master-cleanup-base": }
+}

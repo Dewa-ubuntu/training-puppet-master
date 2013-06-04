@@ -9,4 +9,5 @@ node training-puppet-master {
   class { "mysql-for-puppet-dashboard": }
   class { "puppet-dashboard": }
   class { "puppet-dashboard-workers": }
+  class { "puppet-master-cleanup": }
 }

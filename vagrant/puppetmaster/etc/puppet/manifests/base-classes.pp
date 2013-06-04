@@ -253,10 +253,11 @@ class puppet-dashboard-workers-base {
     provider  => "init",
     require => [ File["/etc/default/puppet-dashboard-workers"] ]
   }
+}
 
+class puppet-master-cleanup-base {
   exec { 'chown -R puppet:puppet /var/lib/puppet':
     path => ['/bin', '/usr/bin', '/usr/sbin'],
-    require => [ File["/etc/default/puppet-dashboard-workers"] ],
+    require  => Class['puppet-dashboard-workers-base'],
   }
-
 }

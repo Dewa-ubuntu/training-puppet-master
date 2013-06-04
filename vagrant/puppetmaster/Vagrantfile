@@ -41,9 +41,4 @@ Vagrant::Config.run do |config|
 
   config.vm.provision :shell, :path => "provision.sh"
 
-  config.vm.provision :puppet_server do |puppet|
-    puppet.puppet_server = "training-puppet-master"
-    puppet.puppet_node = "training-puppet-master"
-  end
-
 end
