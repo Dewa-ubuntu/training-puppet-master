@@ -90,13 +90,16 @@ EOF
 echo "Waiting 10 seconds..."
 sleep 10
 
+echo "Installing mysql-server"
+
+
 echo "Downloading puppet-labs apt-repo..."
 
-wget http://apt.puppetlabs.com/puppetlabs-release-squeeze.deb
+wget http://apt.puppetlabs.com/puppetlabs-release-precise.deb
 
 echo "Installing puppet-labs apt-repo..."
 
-dpkg -i puppetlabs-release-squeeze.deb
+dpkg -i puppetlabs-release-precise.deb
 
 echo "Updating apt-get cache..."
 
@@ -109,7 +112,7 @@ apt-get -y install puppetmaster-passenger
 echo "Copying puppetmaster config and certs..."
 
 cp -av /vagrant/var/lib/puppet /var/lib
-cp -av /vagrant/etc/puppet /etc
+cp -av /vagrant/etc/puppet /etc/
 
 chown -Rv puppet:puppet /var/lib/puppet /etc/puppet
 
@@ -121,13 +124,14 @@ echo "Installing puppet modules..."
 
 for m in \
   puppetlabs-apt \
-  puppetlabs-mysql puppetlabs-ntp \
+  puppetlabs-mysql \
+  puppetlabs-ntp \
   hastexo-location; do
   puppet module install --module_repository http://forge.puppetlabs.com $m
 done
 
 #echo "Applying puppet config..."
 
-#puppet apply /etc/puppet/manifests/site.pp
+puppet apply /etc/puppet/manifests/site.pp
 
 echo "Done..."
