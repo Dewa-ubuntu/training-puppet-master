@@ -11,8 +11,9 @@ class openstack-package-base ( $release = "grizzly" ) {
         location          => "http://ubuntu-cloud.archive.canonical.com/ubuntu",
         release           => "${lsbdistcodename}-updates/${release}",
         repos             => "main",
-        required_packages => 'ubuntu-cloud-keyring',
-        include_src       => false
+        include_src       => false,
+        key               => "5EDB1B62EC4926EA",
+        key_server        => "keyserver.ubuntu.com", 
       }
     }
   }
@@ -218,7 +219,7 @@ class storage-controller-base
 
 class compute-node-base (
   $nova_driver = 'libvirt',
-  $hypervisor = 'kvm',
+  $hypervisor = 'qemu',
   $cinder_driver = 'iscsi',
   $database_host = "alice",
   $rabbit_host = "alice",
@@ -261,7 +262,7 @@ class compute-node-base (
   class { 'quantum::agents::ovs':
     integration_bridge => 'br-int',
     enable_tunneling   => true,
-    local_ip           => $local_tunnel_ip,
+    local_ip           => '192.168.133.112',
     tunnel_bridge      => 'br-tun';
   }
 

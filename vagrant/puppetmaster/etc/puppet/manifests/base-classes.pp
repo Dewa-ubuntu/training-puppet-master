@@ -79,31 +79,78 @@ class debian-base ( $release = "squeeze" ) {
 }
 
 class ubuntu-base ( $release = "precise" ) {
-  apt::source { "ubuntu":
-    location          => "http://at.archive.ubuntu.com/ubuntu",
-    release           => $release,
-    repos             => "main universe multiverse",
-    include_src       => false
+  apt::source { "precise":
+      location => "http://us.archive.ubuntu.com/ubuntu/",
+      release => "precise",
+      repos => "main restricted",
+      include_src => true
   }
 
-  apt::source { "ubuntu-updates":
-    location          => "http://at.archive.ubuntu.com/ubuntu",
-    release           => "${release}-updates",
-    repos             => "main universe multiverse",
-    include_src       => false
+  apt::source { "precise-updates":
+      location => "http://us.archive.ubuntu.com/ubuntu/",
+      release => "precise-updates",
+      repos => "main restricted",
+      include_src => true
   }
 
-  apt::source { "ubuntu-security":
-    location          => "http://at.archive.ubuntu.com/ubuntu",
-    release           => "${release}-security",
-    repos             => "main universe multiverse",
-    include_src       => false
+  apt::source { "precise-universe":
+      location => "http://us.archive.ubuntu.com/ubuntu/",
+      release => "precise",
+      repos => "universe",
+      include_src => true
   }
 
-  # We want everything in /etc/apt/sources.list.d, so we nuke sources.list
-  file { "/etc/apt/sources.list":
-    ensure => absent,
-    require => Apt::Source['ubuntu', 'ubuntu-updates', 'ubuntu-security'];
+  apt::source { "precise-universe-updates":
+      location => "http://us.archive.ubuntu.com/ubuntu/",
+      release => "precise-updates",
+      repos => "universe",
+      include_src => true
+  }
+
+  apt::source { "precise-multiverse":
+      location => "http://us.archive.ubuntu.com/ubuntu/",
+      release => "precise",
+      repos => "multiverse",
+      include_src => true
+  }
+
+  apt::source { "precise-multiverse-updates":
+      location => "http://us.archive.ubuntu.com/ubuntu/",
+      release => "precise-updates",
+      repos => "multiverse",
+      include_src => true
+  }
+
+  apt::source { "precise-backports":
+      location => "http://us.archive.ubuntu.com/ubuntu/",
+      release => "precise-backports",
+      repos => "main restricted universe multiverse",
+      include_src => true
+  }
+
+  apt::source { "precise-security":
+      location => "http://security.ubuntu.com/ubuntu",
+      release => "precise-security",
+      repos => "main restricted universe multiverse",
+      include_src => true
+  }
+
+  apt::source { "precise-cloud-archive":
+      location => "http://ubuntu-cloud.archive.canonical.com/ubuntu",
+      release => "precise-updates/grizzly",
+      repos => "main",
+      key => "5EDB1B62EC4926EA",
+      key_server => "keyserver.ubuntu.com",
+      include_src => true,
+  }
+
+  apt::source { "ceph-bobtail":
+      location => "http://ceph.com/debian-bobtail",
+      release => "precise",
+      repos => "main",
+      key => "17ED316D",
+      key_server => "pgp.mit.edu",
+      include_src => false,
   }
 }
 
