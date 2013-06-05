@@ -11,6 +11,6 @@ node default {
   class { "base": }
 }
 
-node alice {
-  notify { "hey, it works.": }
+node alice{
+  notify { " hey, it works." }
 }

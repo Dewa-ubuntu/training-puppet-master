@@ -1,3 +1,12 @@
+# you probably want to tune these settings
+PassengerHighPerformance on
+PassengerMaxPoolSize 12
+PassengerPoolIdleTime 1500
+# PassengerMaxRequests 1000
+PassengerStatThrottleRate 120
+RackAutoDetect Off
+RailsAutoDetect Off
+
 Listen 8140
 
 <VirtualHost *:8140>
@@ -14,8 +23,7 @@ Listen 8140
         SSLCARevocationFile     /var/lib/puppet/ssl/ca/ca_crl.pem
         SSLVerifyClient optional
         SSLVerifyDepth  1
-        # The `ExportCertData` option is needed for agent certificate expiration warnings
-        SSLOptions +StdEnvVars +ExportCertData
+        SSLOptions +StdEnvVars
 
         # This header needs to be set if using a loadbalancer or proxy
         RequestHeader unset X-Forwarded-For
@@ -32,10 +40,5 @@ Listen 8140
                 Order allow,deny
                 allow from all
         </Directory>
-
-  ErrorLog /var/log/apache2/puppetmaster_error.log
-  LogLevel warn
-  CustomLog /var/log/apache2/puppetmaster_access.log combined
-  ServerSignature On
-
 </VirtualHost>
+

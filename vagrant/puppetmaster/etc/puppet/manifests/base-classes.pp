@@ -1,128 +1,213 @@
-class hastexo-base {
+# classes.pp: classes, typically parameterized, that
+#             describe node roles.
+#
+# Every role should be self-contained such
+# that they can be combined at will.
+# If you're writing functionality where two
+# classes depend on one another, don't
+# assume an admin will remember to assign
+# both classes to one node. Instead, write
+# a class that wraps the others.
+#
+# = NAMING CONVENTIONS =
+# * All class names should end in -base. Wrapper classes
+#   (user-facing, to be used from Dashboard) drop the
+#   -base suffix.
+# * Classes specific to a distribution should include
+#   that distro's name in their own name.
+# * Classes _without_ a distro in their name should be
+#   expected to work anywhere -- where necessary, they
+#   should distinguish by distro via $lsbdistid and
+#   possibly $lsbdistcodename, and do the right thing
+#   specific to that distribution.
 
-  class { 'apt':
-    proxy_host           => training-puppet-master,
-    proxy_port           => '3128',
-    purge_sources_list   => true,
+# Class: debian-base
+#
+# Sets up the Debian software repositories.
+#
+# Parameters:
+#   $release:
+#     The Debian release to install (default "stable")
+#
+# Actions:
+#   - Configure the debian, debian-backports, and debian-security
+#     APT repositories for the configured release
+#   - Remove the /etc/apt/sources_list file.
+#
+# Sample Usage:
+# 
+# class { 'debian base':
+#   release   => $::debian_release
+# }
+class debian-base ( $release = "squeeze" ) {
+  apt::source { "debian":
+    location          => "http://debian.inode.at/debian",
+    release           => $release,
+    repos             => "main",
+    required_packages => "debian-archive-keyring",
+    key               => "55BE302B",
+    key_server        => "pgp.mit.edu",
+    include_src       => false
   }
 
-  apt::source { "precise":
-      location          => "http://us.archive.ubuntu.com/ubuntu/",
-      release           => "precise",
-      repos             => "main restricted",
-      include_src       => true
+  apt::source { "debian-security":
+    location          => "http://debian.inode.at/debian-security",
+    release           => "$release/updates",
+    repos             => "main",
+    required_packages => "debian-archive-keyring",
+    include_src       => false
   }
 
-  apt::source { "precise-updates":
-      location          => "http://us.archive.ubuntu.com/ubuntu/",
-      release           => "precise-updates",
-      repos             => "main restricted",
-      include_src       => true 
+  apt::source { "debian-backports":
+    location          => "http://debian.inode.at/debian-backports",
+    release           => "$release-backports",
+    repos             => "main",
+    required_packages => "debian-archive-keyring",
+    include_src       => false
   }
 
-  apt::source { "precise-universe":
-      location          => "http://us.archive.ubuntu.com/ubuntu/",
-      release           => "precise",
-      repos             => "universe",
-      include_src       => true 
+  # We want everything in /etc/apt/sources.list.d, so we nuke sources.list
+  file { "/etc/apt/sources.list":
+    ensure => absent
   }
 
-  apt::source { "precise-universe-updates":
-      location          => "http://us.archive.ubuntu.com/ubuntu/",
-      release           => "precise-updates",
-      repos             => "universe",
-      include_src       => true
-  }
-
-  apt::source { "precise-multiverse":
-      location          => "http://us.archive.ubuntu.com/ubuntu/",
-      release           => "precise",
-      repos             => "multiverse",
-      include_src       => true
-  }
-
-  apt::source { "precise-multiverse-updates":
-      location          => "http://us.archive.ubuntu.com/ubuntu/",
-      release           => "precise-updates",
-      repos             => "multiverse",
-      include_src       => true
-  }
-
-  apt::source { "precise-backports":
-      location          => "http://us.archive.ubuntu.com/ubuntu/",
-      release           => "precise-backports",
-      repos             => "main restricted universe multiverse",
-      include_src       => true
-  }
-
-  apt::source { "precise-security":
-      location          => "http://security.ubuntu.com/ubuntu",
-      release           => "precise-security",
-      repos             => "main restricted universe multiverse",
-      include_src       => true
-  }
-
-  apt::source { "precise-cloud-archive":
-      location          => "http://ubuntu-cloud.archive.canonical.com/ubuntu",
-      release           => "precise-updates/grizzly",
-      repos             => "main",
-      key               => "5EDB1B62EC4926EA",
-      key_server        => "keyserver.ubuntu.com",
-      include_src       => true,
-  }
-
-  apt::source { "ceph-bobtail":
-      location          => "http://ceph.com/debian-bobtail",
-      release           => "precise",
-      repos             => "main",
-      key               => "17ED316D",
-      key_server        => "pgp.mit.edu",
-      include_src       => false,
+  exec { "/usr/bin/apt-get update":
+    require => [ File['/etc/apt/sources.list'],
+                 Apt::Source['debian', 'debian-security', 'debian-backports']
+               ]
   }
 }
 
-class packages-base {
+class ubuntu-base ( $release = "precise" ) {
+  apt::source { "ubuntu":
+    location          => "http://at.archive.ubuntu.com/ubuntu",
+    release           => $release,
+    repos             => "main universe multiverse",
+    include_src       => false
+  }
 
-  class { "ntp": }
+  apt::source { "ubuntu-updates":
+    location          => "http://at.archive.ubuntu.com/ubuntu",
+    release           => "${release}-updates",
+    repos             => "main universe multiverse",
+    include_src       => false
+  }
 
-  package { "console-data":
-    ensure => "installed",
-    require  => Class['hastexo-base'],
+  apt::source { "ubuntu-security":
+    location          => "http://at.archive.ubuntu.com/ubuntu",
+    release           => "${release}-security",
+    repos             => "main universe multiverse",
+    include_src       => false
   }
-  package { "screen":
-    ensure => "installed",
-    require  => Class['hastexo-base'],
-  }
-  package { "vim":
-    ensure => "installed",
-    require  => Class['hastexo-base'],  
-  }
-  package { "less":
-    ensure => "installed",
-    require  => Class['hastexo-base'],
-  }
-  package { "wget":
-    ensure => "installed",
-    require  => Class['hastexo-base'],
-  }
-  package { "curl":
-    ensure => "installed",
-    require  => Class['hastexo-base'],
-  }
-  package { "nano":
-    ensure => "installed",
-    require  => Class['hastexo-base'],
-  }
-  package { "rsync":
-    ensure => "installed",
-    require  => Class['hastexo-base'],
+
+  # We want everything in /etc/apt/sources.list.d, so we nuke sources.list
+  file { "/etc/apt/sources.list":
+    ensure => absent,
+    require => Apt::Source['ubuntu', 'ubuntu-updates', 'ubuntu-security'];
   }
 }
 
-class mysql-for-puppet-dashboard-base {
+# Class: percona-server-base
+#
+# Installs the Percona Server MySQL database.
+#
+# Parameters:
+#   $version:
+#     The Percona Server version to install (default 5.5)
+#
+# Actions:
+#   - Configure the platform-specific repo.percona.com
+#     software repository
+#   - Install the percona-server-server package (and dependencies)
+#
+# Sample Usage:
+# 
+# class { 'percona-server-base':
+#   version   => $::percona_server_version
+# }
+class percona-server-base ( $version = "5.5" ) {
+
+  case "$lsbdistid" {
+    "Debian","Ubuntu": {
+      apt::source { "percona-server":
+        location          => "http://repo.percona.com/apt",
+        release           => "$lsbdistcodename",
+        repos             => "main",
+        key               => "CD2EFD2A",
+        key_server        => "pgp.mit.edu",
+        include_src       => false
+      }
+    }
+  }
+
+  package { "percona-server-server-$version":
+    ensure           => installed
+  }
+
+}
+
+class mysql-server-base {
+}
+
+class puppetlabs-base {
+
+  case "$lsbdistid" {
+    "Debian","Ubuntu": {
+      apt::source { "puppetlabs":
+        location          => "http://apt.puppetlabs.com/",
+        release           => "$lsbdistcodename",
+        repos             => "main",
+        key	          => "1054B7A24BD6EC30",
+        key_source        => "http://apt.puppetlabs.com/keyring.gpg",
+        include_src       => false
+      }
+    }
+  }
+
+}
+
+class puppet-dashboard-base inherits puppetlabs-base {
+
+  package { "puppet-dashboard":
+    ensure => "installed",
+    require => Class['distro'];
+  }
+  
+  package { "rake": ensure => "installed" }
+
+  file { "/etc/apache2/sites-available/puppet-dashboard":
+    source => "puppet:///private/etc/apache2/sites-available/puppet-dashboard",
+    ensure => 'present',
+    require => Package['apache2', 'puppet-dashboard'],
+    notify => Service['apache2']
+  }
+
+  file { "/etc/puppet-dashboard/database.yml":
+    source => "puppet:///private/etc/puppet-dashboard/database.yml",
+    ensure => 'present',
+    group => 'www-data',
+    require => Package['puppet-dashboard'];
+  }
+
+  file { "/etc/puppet-dashboard/settings.yml":
+    source => "puppet:///private/etc/puppet-dashboard/settings.yml",
+    ensure => 'present',
+    group => 'www-data',
+    require => Package['puppet-dashboard'];
+  }
+
+  file { "/etc/default/puppet-dashboard-workers":
+    source => "puppet:///private/etc/default/puppet-dashboard-workers",
+    ensure => 'present',
+    require => Package['puppet-dashboard'];
+  }
+
+  apache::loadsite { "puppet-dashboard":
+   require => File['/etc/apache2/sites-available/puppet-dashboard'];
+  }
+ 
   class { 'mysql::server':
-    config_hash => { 'root_password' => 'hastexo' },
-    require  => Class['hastexo-base'],
+    config_hash => { 'root_password' => 'hastexo' }
   }
 
   mysql::db { 'dashboard_production':
@@ -131,133 +216,137 @@ class mysql-for-puppet-dashboard-base {
     host     => 'localhost',
     grant    => ['all'],
     charset => 'utf8',
-    require  => Class['hastexo-base'],
-  }
-
-  package { "libmysqlclient-dev":
-    ensure => "installed",
-    require  => Class['hastexo-base'],
-  }
-}
-
-class puppet-dashboard-base {
-  package { "puppet-dashboard":
-    ensure => "installed",
-    require  => Class['mysql-for-puppet-dashboard-base'],
-  }
-
-  package { "apache2":
-    ensure => "installed",
-    require  => Class['mysql-for-puppet-dashboard-base'],
-  }
-
-  service { "apache2":
-    ensure  => "running",
-    enable  => "true",
-    require => Package["apache2"],
-  }
-
-  exec { 'gem install rails -v 2.3.12 --no-ri --no-rdoc':
-    path => ['/usr/bin', '/usr/sbin'],
-    require => Class['mysql-for-puppet-dashboard-base'],
-  }
-
-  exec { 'gem install mysql --no-ri --no-rdoc':
-    path => ['/usr/bin', '/usr/sbin'],
-    require => Class['mysql-for-puppet-dashboard-base'],
-  }
-
-  file { "/etc/puppet-dashboard/database.yml":
-    source => "puppet:///public/etc/puppet-dashboard/database.yml",
-    ensure => 'present',
-    group => 'www-data',
-    require => Package['puppet-dashboard'];
-  }
-
-  file { "/etc/puppet-dashboard/settings.yml":
-    source => "puppet:///public/etc/puppet-dashboard/settings.yml",
-    ensure => 'present',
-    group => 'www-data',
-    require => Package['puppet-dashboard'];
   }
 
   exec { 'rake RAILS_ENV=production db:migrate':
     cwd => '/usr/share/puppet-dashboard',
     path => ['/usr/bin', '/usr/sbin'],
-    require => [ Package['puppet-dashboard'],
+    require => [ Package['rake', 'puppet-dashboard'],
                  File["/etc/puppet-dashboard/settings.yml", "/etc/puppet-dashboard/database.yml"],
                  Mysql::Db["dashboard_production"] ]
   }
 
-  file { "/etc/apache2/mods-available/passenger.conf":
-    source => "puppet:///public/etc/apache2/mods-available/passenger.conf",
-    ensure => 'present',
-    owner => root,
-    group => 'root',
-    notify => Service['apache2'],
-    require => Package['puppet-dashboard'];
+  service { "puppet-dashboard-workers":
+    ensure => "running",
+    require => [ Package['puppet-dashboard'],
+                 File['/etc/default/puppet-dashboard-workers'],
+                 Exec['rake RAILS_ENV=production db:migrate'] ];
   }
 
-  file { "/etc/apache2/sites-available/puppet-dashboard":
-    source => "puppet:///public/etc/apache2/sites-available/puppet-dashboard",
-    ensure => 'present',
-    owner => root,
-    group => 'root',
-    notify => Service['apache2'],
-    require => Package['puppet-dashboard'];
+}
+
+class puppetmaster-base inherits puppetlabs-base {
+  package { "puppetmaster": ensure => "installed" }
+
+  service { 'puppetmaster':
+    enable => false,
+    ensure => stopped;
   }
 
   file { "/etc/apache2/sites-available/puppetmaster":
-    source => "puppet:///public/etc/apache2/sites-available/puppetmaster",
-    ensure => 'present',
-    owner => root,
-    group => 'root',
-    notify => Service['apache2'],
-    require => Package['puppet-dashboard'];
+    source => "puppet:///private/etc/apache2/sites-available/puppetmaster",
+    ensure => 'present'
   }
 
-  exec { 'a2ensite puppet-dashboard':
-    path => ['/usr/bin', '/usr/sbin'],
-    notify => Service['apache2'],
-    require => [ File["/etc/apache2/sites-available/puppet-dashboard"] ]
+  apache::loadsite { "puppetmaster":
+    require => File['/etc/apache2/sites-available/puppetmaster']
   }
 
-  exec { 'update-rc.d -f puppet-dashboard remove':
-    path => ['/usr/bin', '/usr/sbin'],
-    require => [ File["/etc/apache2/sites-available/puppet-dashboard"] ]
-  }
+}
 
-  exec { 'update-rc.d -f puppet-dashboard-workers remove':
-    path => ['/usr/bin', '/usr/sbin'],
-    require => [ File["/etc/apache2/sites-available/puppet-dashboard"] ]
+class puppet-agent-base inherits puppetlabs-base {
+  package { "puppet": ensure => "latest" }
+
+  file { "/etc/puppet/puppet.conf":
+    source => "puppet:///public/etc/puppet/puppet.conf",
+    ensure => 'present'
   }
 }
 
-class puppet-dashboard-workers-base {
-  exec { 'update-rc.d puppet-dashboard-workers start 92 2 3 4 5 . stop 08 0 1 6 .':
-    path => ['/usr/bin', '/usr/sbin'],
-    require => Class['puppet-dashboard-base'],
+class location-base {
+  class { "location": }
+}
+
+class passenger-base {
+  apache::loadmodule { "passenger": }
+}
+
+class base {
+
+  # Make sure we have the lsb-release package installed
+  package { "lsb-release":
+    ensure => "installed"
   }
 
-  file { "/etc/default/puppet-dashboard-workers":
-    source => "puppet:///public/etc/default/puppet-dashboard-workers",
-    ensure => 'present',
-    owner => root,
-    group => 'root',
-    notify => Service['puppet-dashboard-workers'],
-    require => Class['puppet-dashboard-base'],
+  # Then, auto-detect the distribution
+  class { "distro":
+    require => Package['lsb-release'];
   }
 
-  service { "puppet-dashboard-workers":
-    ensure  => "running",
-    provider  => "init",
-    require => [ File["/etc/default/puppet-dashboard-workers"] ]
+  # Install useful packages
+  package { "console-data":
+    ensure => installed,
+    require => Class['distro'];
+  }
+  package { "screen":
+    ensure => installed,
+    require => Class['distro'];
+  }
+  package { "vim":
+    ensure => installed,
+    require => Class['distro'];
+  }
+  package { "less":
+    ensure => installed,
+    require => Class['distro'];
+  }
+  package { "acpid":
+    ensure => installed,
+    require => Class['distro'];
+  }
+  package { "zerofree":
+    ensure => installed,
+    require => Class['distro'];
+  }
+
+  # Set up and configure the NTP daemon
+  class { "ntp":
+    require    => Class['distro'],
+    ensure     => running,
+    servers    => [ "0.pool.ntp.org iburst",
+                    "1.pool.ntp.org iburst",
+                    "2.pool.ntp.org iburst",
+                    "pool.ntp.org iburst" ],
+    autoupdate => true
+  }
+
+  # Configure the hastexo user
+  user { 'hastexo':
+    uid        => 1001,
+    shell      => '/bin/bash',
+    password   => '$6$4Bx5qoBm$mbgGPndsU93ZzigANfK3qmt8YOnzXAquJpjBuzXAh0hrSa8Od.7WUM7AZAlzHEfaIB7NRWeHdb882/WRKkiq90',
+    home       => '/home/hastexo',
+    managehome => true,
+    groups     => ['adm', 'sudo']
+  }
+
+  ssh_authorized_key { 'florian.haas@hastexo.com':
+    user => 'hastexo',
+    type => 'rsa',
+    key => 'AAAAB3NzaC1yc2EAAAADAQABAAABAQDQYrUj6j4+ph/ZezAjXM7UutHFKs3I9SPO6v0k571tuTeY6vVfSr4KoiKD7UiP+wuculkqn3q8y2yMP2CoOhrIQDennViEbIvFlb2p9w0ScDSJGuorB3vuXuKAfbIdGte3TlcL7i3D7mu+2NqhrvnQZblsZsnWy8JnKqqp79otRlrokTSU8XhGSfjCU1I0J6rtVnZJU3RqjfvAXfWF5iplKadHBNrLTPBveGTiyEoqUEdAvuE+biSkbnGQM0dMbWMWSthhEzt8DLKbzEKUeYUo0wqScjdhEi2ySOaYznql0CFw4mWA675xTdwGtd+7lH2mhyDX5c1D6s8VEm7IUeIj',
   }
 }
 
-class puppet-master-cleanup-base {
-  exec { 'chown -R puppet:puppet /var/lib/puppet':
-    path => ['/bin', '/usr/bin', '/usr/sbin'],
-    require  => Class['puppet-dashboard-workers-base'],
+class apache2-base {
+  package { "apache2":
+    ensure => "installed",
+    require => Class['distro'];
+  }
+
+  service { "apache2":
+    ensure => "running",
+    require => Package['apache2'];
   }
 }
+
+

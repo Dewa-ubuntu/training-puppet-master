@@ -1,13 +1,18 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+osd_vdi = 'osd.vdi'
+
 Vagrant::Config.run do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "Ubuntu Precise 64 Bit"
+  config.vm.box = "Ubuntu precise 64 Bit"
+
+  config.vm.customize ['createhd', '--filename', osd_vdi, '--size', 10 * 1024]
+  config.vm.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', osd_vdi]
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
@@ -20,8 +25,8 @@ Vagrant::Config.run do |config|
   # via the IP. Host-only networks can talk to the host machine as well as
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
-  config.vm.network :hostonly, "192.168.122.111"
-  config.vm.network :hostonly, "192.168.133.111"
+  config.vm.network :hostonly, "192.168.122.113"
+  config.vm.network :hostonly, "192.168.133.113"
 
   # Assign this VM to a bridged network, allowing you to connect directly to a
   # network using the host's network device. This makes the VM appear as another
@@ -30,7 +35,7 @@ Vagrant::Config.run do |config|
 
   # Forward a port from the guest to the host, which allows for outside
   # computers to access the VM, whereas host only networking does not.
-  config.vm.forward_port 22, 22111
+  config.vm.forward_port 22, 22113
 
   # Share an additional folder to the guest VM. The first argument is
   # an identifier, the second is the path on the guest to mount the
@@ -40,7 +45,7 @@ Vagrant::Config.run do |config|
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.
   # You will need to create the manifests directory and a manifest in
-  # the file alice.pp in the manifests_path directory.
+  # the file charlie.pp in the manifests_path directory.
   #
   # An example Puppet manifest to provision the message of the day:
   #
@@ -57,7 +62,7 @@ Vagrant::Config.run do |config|
   #
   # config.vm.provision :puppet do |puppet|
   #   puppet.manifests_path = "manifests"
-  #   puppet.manifest_file  = "alice.pp"
+  #   puppet.manifest_file  = "charlie.pp"
   # end
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
@@ -98,14 +103,13 @@ Vagrant::Config.run do |config|
   #
   #   chef.validation_client_name = "ORGNAME-validator"
 
-  config.vm.host_name = "alice"
+  config.vm.host_name = "charlie"
 
   config.vm.provision :shell, :path => "provision.sh"
 
   config.vm.provision :puppet_server do |puppet|
     puppet.puppet_server = "training-puppet-master"
-    puppet.puppet_node = "alice"
-    puppet.options = [ "--pluginsync" ]
+    puppet.puppet_node = "charlie"
   end
 
 end
